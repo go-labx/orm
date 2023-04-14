@@ -24,48 +24,56 @@ type DataSource struct {
 
 type Option func(*DataSource)
 
+// SetUser sets the user for the DataSource
 func SetUser(user string) Option {
 	return func(d *DataSource) {
 		d.User = user
 	}
 }
 
+// SetPassword sets the password for the DataSource
 func SetPassword(password string) Option {
 	return func(d *DataSource) {
 		d.Password = password
 	}
 }
 
+// SetNet sets the network for the DataSource
 func SetNet(net string) Option {
 	return func(d *DataSource) {
 		d.Net = net
 	}
 }
 
+// SetHost sets the host for the DataSource
 func SetHost(host string) Option {
 	return func(d *DataSource) {
 		d.Host = host
 	}
 }
 
+// SetPort sets the port for the DataSource
 func SetPort(port int32) Option {
 	return func(d *DataSource) {
 		d.Port = port
 	}
 }
 
+// SetDBName sets the database name for the DataSource
 func SetDBName(dbname string) Option {
 	return func(d *DataSource) {
 		d.DBName = dbname
 	}
 }
 
+// SetParams sets the parameters for the DataSource
 func SetParams(params map[string]string) Option {
 	return func(d *DataSource) {
 		d.Params = params
 	}
 }
 
+// New creates a new DataSource with the given options
 func New(options ...Option) *DataSource {
 	datasource := &DataSource{
 		User:     "",
@@ -84,6 +92,7 @@ func New(options ...Option) *DataSource {
 	return datasource
 }
 
+// DSN returns the data source name for the DataSource
 func (d *DataSource) DSN() string {
 	switch d.Driver {
 	case MySQLDriver:
