@@ -1,3 +1,3 @@
-module github.com/go-labx/example
+module github.com/go-labx/orm
 
 go 1.19
