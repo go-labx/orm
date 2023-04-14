@@ -1,6 +1,9 @@
 package orm
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestNew(t *testing.T) {
 	// Test with default options
@@ -28,6 +31,10 @@ func TestNew(t *testing.T) {
 	}
 
 	// Test with custom options
+	params := map[string]string{
+		"parseTime": "true",
+		"charset":   "utf8mb4",
+	}
 	ds = New(
 		SetUser("testuser"),
 		SetPassword("testpass"),
@@ -35,6 +42,7 @@ func TestNew(t *testing.T) {
 		SetHost("/var/run/mysql.sock"),
 		SetPort(1234),
 		SetDBName("testdb"),
+		SetParams(params),
 	)
 	if ds.User != "testuser" {
 		t.Errorf("Expected User to be testuser, but got %s", ds.User)
@@ -56,6 +64,9 @@ func TestNew(t *testing.T) {
 	}
 	if ds.Driver != MySQLDriver {
 		t.Errorf("Expected Driver to be MySQLDriver, but got %s", ds.Driver)
+	}
+	if !reflect.DeepEqual(params, ds.Params) {
+		t.Errorf("Expected Params to be %v, but got %v", params, ds.Params)
 	}
 }
 
