@@ -73,8 +73,8 @@ func SetParams(params map[string]string) Option {
 	}
 }
 
-// New creates a new DataSource with the given options
-func New(options ...Option) *DataSource {
+// NewDataSource creates a new DataSource with the given options
+func NewDataSource(options ...Option) *DataSource {
 	datasource := &DataSource{
 		User:     "",
 		Password: "",

@@ -7,7 +7,7 @@ import (
 
 func TestNew(t *testing.T) {
 	// Test with default options
-	ds := New()
+	ds := NewDataSource()
 	if ds.User != "" {
 		t.Errorf("Expected User to be empty, but got %s", ds.User)
 	}
@@ -35,7 +35,7 @@ func TestNew(t *testing.T) {
 		"parseTime": "true",
 		"charset":   "utf8mb4",
 	}
-	ds = New(
+	ds = NewDataSource(
 		SetUser("testuser"),
 		SetPassword("testpass"),
 		SetNet("unix"),
