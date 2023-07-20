@@ -4,8 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
-	"github.com/go-labx/orm/session"
 	"time"
+
+	"github.com/go-labx/orm/session"
 
 	"github.com/go-labx/orm/logger"
 )
@@ -33,6 +34,7 @@ func NewDB(d *DataSource) (*DB, error) {
 	}, nil
 }
 
+// NewSession creates a new session with the current database connection
 func (d *DB) NewSession() *session.Session {
 	return session.New(d.db)
 }
@@ -80,9 +82,6 @@ func (d *DB) Stats() sql.DBStats {
 }
 
 // Ping verifies a connection to the database is still alive, establishing a connection if necessary.
-//
-// Ping uses context.Background internally; to specify the context, use
-// PingContext.
 func (d *DB) Ping() error {
 	return d.db.Ping()
 }
@@ -127,9 +126,6 @@ func (d *DB) QueryContext(ctx context.Context, query string, args ...any) (*sql.
 // If the query selects no rows, the *Row's Scan will return ErrNoRows.
 // Otherwise, the *Row's Scan scans the first selected row and discards
 // the rest.
-//
-// QueryRow uses context.Background internally; to specify the context, use
-// QueryRowContext.
 func (d *DB) QueryRow(query string, args ...any) *sql.Row {
 	return d.db.QueryRow(query, args...)
 }
