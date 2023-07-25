@@ -5,19 +5,26 @@ import (
 	"database/sql"
 	"strings"
 
+	"github.com/go-labx/orm/dialect"
 	"github.com/go-labx/orm/logger"
+	"github.com/go-labx/orm/schema"
 )
 
 // Session struct holds the database connection and the SQL query to be executed.
 type Session struct {
-	db      *sql.DB         // Database connection
-	sql     strings.Builder // SQL query
-	sqlArgs []interface{}   // Arguments for the SQL query
+	db       *sql.DB // Database connection
+	dialect  dialect.Dialect
+	refTable *schema.Schema
+	sql      strings.Builder // SQL query
+	sqlArgs  []interface{}   // Arguments for the SQL query
 }
 
 // New creates a new Session with the provided database connection.
-func New(db *sql.DB) *Session {
-	return &Session{db: db}
+func New(db *sql.DB, dialect dialect.Dialect) *Session {
+	return &Session{
+		db:      db,
+		dialect: dialect,
+	}
 }
 
 // Clear resets the SQL query and its arguments in the Session.

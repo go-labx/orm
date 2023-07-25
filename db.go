@@ -4,16 +4,19 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
+	"fmt"
 	"time"
 
+	"github.com/go-labx/orm/dialect"
 	"github.com/go-labx/orm/session"
 
 	"github.com/go-labx/orm/logger"
 )
 
 type DB struct {
-	debug bool
-	db    *sql.DB
+	debug   bool
+	db      *sql.DB
+	dialect dialect.Dialect
 }
 
 // NewDB creates a new ORM DB instance
@@ -21,22 +24,33 @@ func NewDB(d *DataSource) (*DB, error) {
 	dsn := d.DSN()
 	db, err := sql.Open(string(d.Driver), dsn)
 	if err != nil {
+		logger.Error(err)
 		return nil, err
 	}
 
 	if err = db.Ping(); err != nil {
+		logger.Error(err)
+		return nil, err
+	}
+
+	// make sure the specific dialect exists
+	dial, ok := dialect.GetDialect(string(d.Driver))
+	if !ok {
+		err = fmt.Errorf("dialect %s Not Found", d.Driver)
+		logger.Error(err)
 		return nil, err
 	}
 
 	logger.Info("Connect database success")
 	return &DB{
-		db: db,
+		db:      db,
+		dialect: dial,
 	}, nil
 }
 
 // NewSession creates a new session with the current database connection
 func (d *DB) NewSession() *session.Session {
-	return session.New(d.db)
+	return session.New(d.db, d.dialect)
 }
 
 // EnableDebug sets the debug flag to true

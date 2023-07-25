@@ -7,7 +7,7 @@ import (
 type DriverName string
 
 const (
-	MySQLDriver DriverName = "mysql"
+	MySQLDriver DriverName = MySQL
 )
 
 type DataSource struct {
@@ -96,7 +96,7 @@ func NewDataSource(options ...Option) *DataSource {
 func (d *DataSource) DSN() string {
 	switch d.Driver {
 	case MySQLDriver:
-		params := mapToString(d.Params)
+		params := MapToString(d.Params)
 		return fmt.Sprintf("%s:%s@%s(%s:%d)/%s?%s", d.User, d.Password, d.Net, d.Host, d.Port, d.DBName, params)
 	default:
 		panic("unsupported driver")
