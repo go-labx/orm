@@ -164,3 +164,19 @@ func (d *DB) QueryRowContext(ctx context.Context, query string, args ...any) *sq
 func (d *DB) Conn(ctx context.Context) (*sql.Conn, error) {
 	return d.db.Conn(ctx)
 }
+
+// IsTableExist checks if a table with the given name exists in the database.
+// It returns true if the table exists, false otherwise.
+func (d *DB) IsTableExist(name string) bool {
+	if name == "" {
+		return false
+	}
+
+	sqlStat, args := d.dialect.IsTableExist(name)
+
+	row := d.QueryRow(sqlStat, args...)
+	var tableName string
+	_ = row.Scan(&tableName)
+
+	return tableName == name
+}
