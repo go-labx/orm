@@ -196,3 +196,15 @@ func (d *DB) DropTable(name string) bool {
 
 	return true
 }
+
+func (d *DB) Version() (string, error) {
+	sqlStat := d.dialect.VersionSQL()
+
+	var version string
+	row := d.QueryRow(sqlStat)
+	err := row.Scan(&version)
+	if err != nil {
+		return "", err
+	}
+	return version, nil
+}

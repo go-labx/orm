@@ -8,6 +8,8 @@ var dialectsMap = map[string]Dialect{}
 
 // Dialect is an interface that represents a SQL dialect
 type Dialect interface {
+	VersionSQL() string
+
 	// DataTypeOf returns the SQL data type of the given Go data type
 	DataTypeOf(typ reflect.Value) string
 	// IsTableExistSQL returns the SQL query that checks if a table exists
