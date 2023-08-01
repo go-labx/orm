@@ -12,6 +12,7 @@ type Dialect interface {
 
 	// DataTypeOf returns the SQL data type of the given Go data type
 	DataTypeOf(typ reflect.Value) string
+
 	// IsTableExistSQL returns the SQL query that checks if a table exists
 	IsTableExistSQL(tableName string) string
 

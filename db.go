@@ -14,10 +14,11 @@ import (
 )
 
 type DB struct {
-	debug   bool
-	db      *sql.DB
-	dialect dialect.Dialect
-	dsn     string
+	debug      bool
+	db         *sql.DB
+	dialect    dialect.Dialect
+	dsn        string
+	dataSource *DataSource
 }
 
 // NewDB creates a new ORM DB instance
@@ -44,9 +45,10 @@ func NewDB(d *DataSource) (*DB, error) {
 
 	logger.Info("Connect database success")
 	return &DB{
-		db:      db,
-		dialect: dial,
-		dsn:     dsn,
+		db:         db,
+		dialect:    dial,
+		dsn:        dsn,
+		dataSource: d,
 	}, nil
 }
 
@@ -213,4 +215,8 @@ func (d *DB) Version() (string, error) {
 
 func (d *DB) DataSourceName() string {
 	return d.dsn
+}
+
+func (d *DB) DriverName() string {
+	return string(d.dataSource.Driver)
 }
