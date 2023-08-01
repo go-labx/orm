@@ -38,6 +38,10 @@ func (mysql *MysqlDialect) DataTypeOf(typ reflect.Value) string {
 	panic(fmt.Sprintf("invalid sql type %s (%s)", typ.Type().Name(), typ.Kind()))
 }
 
-func (mysql *MysqlDialect) IsTableExist(tableName string) (string, []interface{}) {
-	return "SELECT table_name FROM information_schema.tables WHERE table_name = ?", []interface{}{tableName}
+func (mysql *MysqlDialect) IsTableExistSQL(tableName string) string {
+	return fmt.Sprintf("SELECT table_name FROM information_schema.tables WHERE table_name = `%s`;", tableName)
+}
+
+func (mysql *MysqlDialect) DropTableSQL(tableName string) string {
+	return fmt.Sprintf("DROP TABLE IF EXISTS `%s`;", tableName)
 }

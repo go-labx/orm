@@ -40,8 +40,8 @@ func (s *Session) DropTable() error {
 }
 
 func (s *Session) HasTable() bool {
-	sql, values := s.dialect.IsTableExist(s.RefTable().Name)
-	row := s.Raw(sql, values...).QueryRow()
+	sql := s.dialect.IsTableExistSQL(s.RefTable().Name)
+	row := s.Raw(sql).QueryRow()
 	var tmp string
 	_ = row.Scan(&tmp)
 	return tmp == s.RefTable().Name

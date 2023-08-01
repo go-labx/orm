@@ -113,25 +113,25 @@ func (d *DB) Driver() driver.Driver {
 // Exec executes a query without returning any rows.
 // The args are for any placeholder parameters in the query.
 func (d *DB) Exec(query string, args ...any) (sql.Result, error) {
-	return d.db.Exec(query, args...)
+	return d.NewSession().Raw(query, args...).Exec()
 }
 
 // ExecContext executes a query without returning any rows.
 // The args are for any placeholder parameters in the query.
 func (d *DB) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
-	return d.db.ExecContext(ctx, query, args...)
+	return d.NewSession().Raw(query, args...).ExecContext(ctx)
 }
 
 // Query executes a query that returns rows, typically a SELECT.
 // The args are for any placeholder parameters in the query.
 func (d *DB) Query(query string, args ...any) (*sql.Rows, error) {
-	return d.db.Query(query, args...)
+	return d.NewSession().Raw(query, args...).Query()
 }
 
 // QueryContext executes a query that returns rows, typically a SELECT.
 // The args are for any placeholder parameters in the query.
 func (d *DB) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
-	return d.db.QueryContext(ctx, query, args...)
+	return d.NewSession().Raw(query, args...).QueryContext(ctx)
 }
 
 // QueryRow executes a query that is expected to return at most one row.
@@ -141,7 +141,7 @@ func (d *DB) QueryContext(ctx context.Context, query string, args ...any) (*sql.
 // Otherwise, the *Row's Scan scans the first selected row and discards
 // the rest.
 func (d *DB) QueryRow(query string, args ...any) *sql.Row {
-	return d.db.QueryRow(query, args...)
+	return d.NewSession().Raw(query, args...).QueryRow()
 }
 
 // QueryRowContext executes a query that is expected to return at most one row.
@@ -151,7 +151,7 @@ func (d *DB) QueryRow(query string, args ...any) *sql.Row {
 // Otherwise, the *Row's Scan scans the first selected row and discards
 // the rest.
 func (d *DB) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
-	return d.db.QueryRowContext(ctx, query, args...)
+	return d.NewSession().Raw(query, args...).QueryRowContext(ctx)
 }
 
 // Conn returns a single connection by either opening a new connection
@@ -172,11 +172,27 @@ func (d *DB) IsTableExist(name string) bool {
 		return false
 	}
 
-	sqlStat, args := d.dialect.IsTableExist(name)
+	sqlStat := d.dialect.IsTableExistSQL(name)
 
-	row := d.QueryRow(sqlStat, args...)
+	row := d.QueryRow(sqlStat)
 	var tableName string
 	_ = row.Scan(&tableName)
 
 	return tableName == name
+}
+
+func (d *DB) DropTable(name string) bool {
+	if name == "" {
+		return false
+	}
+
+	sqlStat := d.dialect.DropTableSQL(name)
+
+	_, err := d.Exec(sqlStat)
+	if err != nil {
+		logger.Error(err)
+		return false
+	}
+
+	return true
 }

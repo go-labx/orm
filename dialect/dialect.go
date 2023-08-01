@@ -10,8 +10,10 @@ var dialectsMap = map[string]Dialect{}
 type Dialect interface {
 	// DataTypeOf returns the SQL data type of the given Go data type
 	DataTypeOf(typ reflect.Value) string
-	// IsTableExist returns the SQL query that checks if a table exists
-	IsTableExist(tableName string) (string, []interface{})
+	// IsTableExistSQL returns the SQL query that checks if a table exists
+	IsTableExistSQL(tableName string) string
+
+	DropTableSQL(tableName string) string
 }
 
 // RegisterDialect registers a new SQL dialect
