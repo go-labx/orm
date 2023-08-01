@@ -17,6 +17,7 @@ type DB struct {
 	debug   bool
 	db      *sql.DB
 	dialect dialect.Dialect
+	dsn     string
 }
 
 // NewDB creates a new ORM DB instance
@@ -45,6 +46,7 @@ func NewDB(d *DataSource) (*DB, error) {
 	return &DB{
 		db:      db,
 		dialect: dial,
+		dsn:     dsn,
 	}, nil
 }
 
@@ -207,4 +209,8 @@ func (d *DB) Version() (string, error) {
 		return "", err
 	}
 	return version, nil
+}
+
+func (d *DB) DataSourceName() string {
+	return d.dsn
 }
